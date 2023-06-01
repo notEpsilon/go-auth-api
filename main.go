@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -32,7 +33,11 @@ func main() {
 		AllowCredentials: true,
 	}))
 
+	prometheus := fiberprometheus.New("go-auth-api")
+	prometheus.RegisterAt(app, "/metrics")
+
 	app.Use(logger.New())
+	app.Use(prometheus.Middleware)
 
 	routes.AttachAuthRoutesV1(app)
 
